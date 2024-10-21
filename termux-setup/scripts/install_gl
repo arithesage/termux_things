@@ -1,25 +1,56 @@
 #!/bin/bash
 
+function failed
+{
+    echo "Failed. Aborting."
+    exit 1
+}
+
+
+
+
 if [ -f "$HOME/.gl_already_setup" ];
 then
     echo "VirGL already setup."
     exit 0
 fi
 
+
+echo "Setting up VirGL..."
+echo "==================="
+echo ""
+
+
 APT_REPOS=$PREFIX/etc/apt/sources.list.d
 
 if ! [ -f ${APT_REPOS}/tur.list ];
 then
+    pkg update
     pkg install -y tur-repo
-    pkg update -y && pkg upgrade -y
+
+    if ! [ "$?" == "0" ];
+    then
+        failed
+    fi
+
+    echo "- Installed 'tur' repository."
 fi
+
 
 pkg install -y mesa-zink virglrenderer-mesa-zink vulkan-loader-android
 
-echo "export MESA_LOADER_DRIVER_OVERRIDE=zink" >> $HOME/.bashrc
-echo "export GALLIUM_DRIVER=zink" >> $HOME/.bashrc
-echo "export ZINK_DESCRIPTORS=lazy virgl_test_server --use-egl-surfaceless &" >> $HOME/.bash
-"
+
+if ! [ "$?" == "0" ];
+then
+    failed
+fi
+
+
+echo "- Installed mesa, virgl and vulkan packages."
+
+echo "source $HOME/.virgl_environment" >> $HOME/.bashrc
+echo "" >> $HOME/.bashrc
+
 
 echo "VirGL setup finished"
 

@@ -25,10 +25,11 @@ fi
 
 [ -r /data/data/com.termux/files/usr/share/bash-completion/bash_completion ] && . /data/data/com.termux/files/usr/share/bash-completion/bash_completion
 
-export DISPLAY=:0
-export MESA_LOADER_DRIVER_OVERRIDE=zink
-export GALLIUM_DRIVER=zink
-export ZINK_DESCRIPTORS="lazy virgl_test_server --use-egl-surfaceless &"
+#export DISPLAY=:0
+#export MESA_LOADER_DRIVER_OVERRIDE=zink
+#export GALLIUM_DRIVER=zink
+#export ZINK_DESCRIPTORS="lazy virgl_test_server --use-egl-surfaceless &"
 
 source $HOME/.environment
+source $HOME/.virgl_environment
 

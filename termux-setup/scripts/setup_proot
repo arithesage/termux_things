@@ -1,0 +1,4 @@
+#!/bin/bash
+
+proot-distro install debian
+
