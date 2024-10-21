@@ -1,0 +1,5 @@
+#!/bin/bash
+
+screen -dmS x11 "termux-x11 :0"
+
+

@@ -1,0 +1,96 @@
+#!/bin/bash
+
+function failed
+{
+    echo "Failed!"
+    exit 1
+}
+
+
+
+if [ -f "$HOME/.wine_installed" ];
+then
+    echo "Wine is already installed."
+    echo ""
+    exit 0
+fi
+
+
+echo "Installing WINE..."
+echo "=================="
+
+dpkg --print-foreign-architectures | grep i386 > /dev/null
+
+if ! [ "$?" == "0" ];
+then
+    dpkg --add-architecture i386
+
+    if ! [ "$?" == "0" ];
+    then
+        failed
+    fi
+
+    echo "- Added i386 architecture."
+
+
+    dpkg --add-architecture amd64
+
+    if ! [ "$?" == "0" ];
+    then
+        failed
+    fi
+
+    echo "- Added amd64 architecture."
+fi
+
+
+if ! [ -f /etc/apt/keyrings/winehq-archive.key ];
+then
+    if ! [ -d /etc/apt/keyrings ];
+    then
+        mkdir /etc/apt/keyrings
+    fi
+
+    wget -O /etc/apt/keyrings/winehq-archive.key https://dl.winehq.org/wine-builds/winehq.key
+
+    if ! [ "$?" == "0" ];
+    then
+        failed
+    fi
+
+    echo "- Added winehq GPG key to keyrings."
+fi
+
+
+if ! [ -f /etc/apt/sources.list.d/winehq-bookworm.sources ];
+then
+    wget -NP /etc/apt/sources.list.d/ https://dl.winehq.org/wine-builds/debian/dists/bookworm/winehq-bookworm.sources
+    
+    if ! [ "$?" == "0" ];
+    then
+        failed
+    fi
+
+    echo "- Added winehq sources list for APT."
+fi
+
+
+if ! [ -f "/usr/bin/wine" ];
+then
+    echo "- Updating APT database..."
+    apt-get update
+
+    echo "- Installing WINE Staging..."
+    apt install -y --install-recommends winehq-staging
+
+    if ! [ "$?" == "0" ];
+    then
+        failed
+    fi
+
+    echo "Finished WINE setup!"
+    echo ""
+fi
+
+touch "$HOME/.wine_installed"
+

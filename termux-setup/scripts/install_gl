@@ -1,0 +1,27 @@
+#!/bin/bash
+
+if [ -f "$HOME/.gl_already_setup" ];
+then
+    echo "VirGL already setup."
+    exit 0
+fi
+
+APT_REPOS=$PREFIX/etc/apt/sources.list.d
+
+if ! [ -f ${APT_REPOS}/tur.list ];
+then
+    pkg install -y tur-repo
+    pkg update -y && pkg upgrade -y
+fi
+
+pkg install -y mesa-zink virglrenderer-mesa-zink vulkan-loader-android
+
+echo "export MESA_LOADER_DRIVER_OVERRIDE=zink" >> $HOME/.bashrc
+echo "export GALLIUM_DRIVER=zink" >> $HOME/.bashrc
+echo "export ZINK_DESCRIPTORS=lazy virgl_test_server --use-egl-surfaceless &" >> $HOME/.bash
+"
+
+echo "VirGL setup finished"
+
+touch $HOME/.gl_already_setup
+

@@ -1,0 +1,78 @@
+#!/bin/bash
+
+function failed
+{
+    echo "Installation failed!"
+    echo ""
+    exit 1
+}
+
+
+
+
+if [ -f "$HOME/.box64_installed" ];
+then
+    echo "Box64 is already installed."
+    echo ""
+    exit 0
+fi
+
+
+echo "Installing Box64..."
+echo "==================="
+
+if ! [ -f "/usr/share/keyrings/box64-archive-keyring.gpg" ];
+then
+    if ! [ -d /usr/share/keyrings ];
+    then
+        mkdir /usr/share/keyrings
+    fi
+
+    wget -qO- "https://pi-apps-coders.github.io/box64-debs/KEY.gpg" | gpg --dearmor -o /usr/share/keyrings/box64-archive-keyring.gpg
+
+    if ! [ "$?" == "0" ];
+    then
+        echo "Could not intall the GPG key."
+        failed
+    fi
+
+    echo "- Added GPG key to keyrings."
+fi
+
+
+if ! [ -f "/etc/apt/sources/list.d/box64.sources" ];
+then
+    echo "Types: deb" > /var/tmp/box64.sources
+    echo "URIs: https://Pi-Apps-Coders.github.io/box64-debs/debian" >> /var/tmp/box64.sources
+    echo "Suites: ./" >> /var/tmp/box64.sources
+    echo "Signed-By: /usr/share/keyrings/box64-archive-keyring.gpg" >> /var/tmp/box64.sources
+
+    mv /var/tmp/box64.sources /etc/apt/sources.list.d/
+
+    echo "- Added sources list for APT."
+fi
+
+
+if ! [ -f "/usr/local/bin/box64" ];
+then
+    echo "- Updating APT sources..."
+    apt update
+    
+    echo "- Installing box64-android ..."
+    apt install -y box64-android
+
+    if ! [ "$?" == "0" ];
+    then
+        failed
+    fi
+
+    echo "Box64 for Android installed."
+    echo ""
+fi
+
+
+echo "Finished!"
+echo ""
+
+touch $HOME/.box64_installed
+
