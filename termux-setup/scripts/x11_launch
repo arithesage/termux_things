@@ -3,5 +3,5 @@
 EXE=$1
 ARGS=$2
 
-proot-distro login winenv --user linux --shared-tmp 
-
+proot-distro login debian --user puser --shared-tmp $HOME/scripts/enable_x11
+proot-distro login debian --user puser --shared-tmp $EXE $ARGS

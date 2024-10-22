@@ -1,4 +1,49 @@
 #!/bin/bash
 
-proot-distro install debian
+function failed
+{
+    echo "Failed. Aborting."
+    exit 1
+}
 
+
+
+
+if ! [ -d "$PREFIX/var/lib/proot-distro/installed-rootfs/debian" ];
+then
+    if ! [ -f "${PREFIX}/bin/proot-distro" ];
+    then
+        echo "- Installing proot-distro ..."
+        
+        pkg update
+        pkg install -y proot-distro
+
+        if ! [ "$?" == "0" ];
+        then
+            failed
+        fi
+    fi
+
+
+    echo "- Installing debian ..."
+    proot-distro install debian
+
+    if ! [ "$?" == "0" ];
+    then
+        failed
+    fi
+
+
+    echo "- Preparing debian ..."
+
+    $HOME/prun_admin apt-get update
+    $HOME/prun_admin apt-get install -y screen wget
+    $HOME/prun_admin useradd --create-home --shell /bin/bash puser
+
+    if ! [ "$?" == "0" ];
+    then
+        failed
+    fi
+
+    echo "Finished."
+fi

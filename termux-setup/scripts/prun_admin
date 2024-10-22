@@ -3,5 +3,5 @@
 CMDLINE=$*
 EXT_SD=/storage/3026-AF9C
 
-proot-distro login proot_debian --bind ${EXT_SD}:/mnt/extsd --shared-tmp -- ${CMDLINE}
+proot-distro login debian --bind ${EXT_SD}:/mnt/extsd --shared-tmp -- ${CMDLINE}
 
