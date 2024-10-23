@@ -76,8 +76,8 @@ then
     echo "- Updating APT sources..."
     apt update
     
-    echo "- Installing box86-android ..."
-    apt install -y box86-android
+    echo "- Installing libc6 and box86-android ..."
+    apt install -y libc6:armhf box86-android
 
     if ! [ "$?" == "0" ];
     then

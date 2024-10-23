@@ -26,7 +26,7 @@ SCRIPTS_REPO=$SCRIPTS_REPO/refs/heads/main/termux-setup/scripts
 
 if ! [ -d "$HOME/storage" ];
 then
-    echo "Execute 'termux-setup-storage' first to grant Termux access"
+    echo "Execute 'termux-setup-storage' first, to grant Termux access"
     echo "to the Android filesystem."
     echo ""
     echo "It is also recommended, if you have not done it yet, to"
@@ -136,7 +136,7 @@ else
     fi
 fi
 
-echo "Basic setup done. Restart Termux or execute '. $HOME/.environment'"
+echo "Basic setup done. Restart Termux before continuing."
 echo "Enjoy Termux!"
 echo ""
 
