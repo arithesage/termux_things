@@ -49,6 +49,7 @@ then
 
     pkg update
 
+    echo ""
     echo "Installing OpenSSH and Wget..."
     echo "================================"
     echo ""
@@ -64,7 +65,10 @@ fi
 
 if ! [ -f "$HOME/scripts" ];
 then
+    echo ""
     echo "Installing some useful scripts..."
+    echo "================================="
+    echo ""
 
     mkdir "$HOME/scripts"
 
@@ -105,8 +109,8 @@ fi
 
 if ! [ -f "$HOME/.extsd_id" ];
 then
-    extsd_path = $(realpath "$HOME/storage/external-1")
-    extsd_id = ${extsd_path:9:9}
+    extsd_path=$(realpath "$HOME/storage/external-1")
+    extsd_id=${extsd_path:9:9}
 
     echo $extsd_id > "$HOME/.extsd_id"
     echo "export EXT_SD=\"/storage/${extsd_id}\"" >> "$HOME/.environment"
