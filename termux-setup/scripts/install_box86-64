@@ -71,7 +71,7 @@ fi
 if ! [ -f "/usr/local/bin/box86" ];
 then
     dpkg --add-architecture armhf
-    echo "- Enabled armhf architecture..."
+    echo "- Enabled armhf architecture."
 
     echo "- Updating APT sources..."
     apt update
@@ -126,6 +126,9 @@ fi
 
 if ! [ -f "/usr/local/bin/box64" ];
 then
+    dpkg --add-architecture arm64
+    echo "- Enabled arm64 architecture."
+
     echo "- Updating APT sources..."
     apt update
     

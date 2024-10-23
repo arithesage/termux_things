@@ -40,6 +40,7 @@ then
     fi
 
 
+    echo ""
     echo "Installing ${PROOT_DISTRO} ..."
     echo "=============================="
     echo ""
