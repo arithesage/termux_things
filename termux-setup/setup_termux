@@ -115,6 +115,9 @@ echo "it seems always runs before storage folder is created, and so, it"
 echo "doesn't find any 'external-1' folder (because there is none)."
 echo ""
 
-echo "Basic setup done. Enjoy Termux!"
+echo "Basic setup done. Restart Termux or execute '. $HOME/.environment'"
+echo "Enjoy Termux!"
+echo ""
+
 touch "$HOME/.termux_setup_done"
 
