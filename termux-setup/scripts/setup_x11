@@ -1,0 +1,54 @@
+#!/bin/bash
+
+function failed
+{
+    echo "Failed. Aborting."
+    exit 1
+}
+
+
+if [ -f "$HOME/.x11_ready" ];
+then
+    echo "X11 already setup."
+    exit 0
+fi
+
+APT_REPOS=$PREFIX/etc/apt/sources.list.d
+
+
+
+
+if ! [ -f ${APT_REPOS}/x11.list ];
+then
+    echo "Installing 'x11' repository ..."
+    echo "==============================="
+    echo ""
+
+    pkg update
+    pkg install -y x11-repo
+
+    if ! [ "$?" == "0" ];
+    then
+        failed
+    fi
+fi
+
+
+if ! [ "$PREFIX/bin/termux-x11" ];
+then
+    echo "Installing 'termux-x11' ..."
+    echo "==========================="
+    echo ""
+
+    pkg update
+    pkg install -y termux-x11
+
+    if ! [ "$?" == "0" ];
+    then
+        failed
+    fi
+fi
+
+
+echo "Finished."
+touch $HOME/.x11_ready

@@ -1,0 +1,3 @@
+#!/bin/bash
+
+prun_admin install_wine

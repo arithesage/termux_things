@@ -13,13 +13,13 @@ then
     exit 0
 fi
 
+APT_REPOS=$PREFIX/etc/apt/sources.list.d
+
 
 
 
 echo "Setting up VirGL..."
 echo "==================="
-
-APT_REPOS=$PREFIX/etc/apt/sources.list.d
 
 if ! [ -f ${APT_REPOS}/tur.list ];
 then
