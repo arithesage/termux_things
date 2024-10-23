@@ -44,11 +44,15 @@ fi
 
 if ! [ -f "$BIN/sshd" ] || ! [ -f "$BIN/git" ];
 then
-    echo "Proceeding with the installing of some packages..."
+    echo "- Proceeding with the installing of some packages..."
+    echo ""
 
     pkg update
 
-    echo "- Installing OpenSSH and Wget..."
+    echo "Installing OpenSSH and Wget..."
+    echo "================================"
+    echo ""
+
     pkg install -y openssh wget
 
     if ! [ "$?" == "0" ];
@@ -78,12 +82,15 @@ then
     wget $SCRIPTS_REPO/prun_admin -O "$SCRIPTS/prun_admin"
     wget $SCRIPTS_REPO/prun_x11 -O "$SCRIPTS/prun_x11"
     wget $SCRIPTS_REPO/setup_proot -O "$SCRIPTS/setup_proot"
+
+    chmod +x $SCRIPTS
 fi
 
 
 if ! [ -d "$HOME/storage" ];
 then
-    echo -n "- Preparing storage access. Please, grant permission when asked... "
+    echo "- Preparing storage access."
+    echo -n "Please, grant permission when asked... "
 
     termux-setup-storage
 
@@ -96,7 +103,7 @@ then
 fi
 
 
-if ![ -f "$HOME/.extsd_id" ];
+if ! [ -f "$HOME/.extsd_id" ];
 then
     extsd_path = $(realpath "$HOME/storage/external-1")
     extsd_id = ${extsd_path:9:9}
