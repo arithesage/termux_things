@@ -70,6 +70,9 @@ fi
 
 if ! [ -f "/usr/local/bin/box86" ];
 then
+    dpkg --add-architecture armhf
+    echo "- Enabled armhf architecture..."
+
     echo "- Updating APT sources..."
     apt update
     

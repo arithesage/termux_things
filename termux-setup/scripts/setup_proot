@@ -26,7 +26,9 @@ if ! [ -d "$PROOT_PATH" ];
 then
     if ! [ -f "${PREFIX}/bin/proot-distro" ];
     then
-        echo "- Installing proot-distro ..."
+        echo "Installing proot-distro ..."
+        echo "==========================="
+        echo ""
         
         pkg update
         pkg install -y proot-distro
@@ -38,7 +40,10 @@ then
     fi
 
 
-    echo "- Installing ${PROOT_DISTRO} ..."
+    echo "Installing ${PROOT_DISTRO} ..."
+    echo "=============================="
+    echo ""
+
     proot-distro install ${PROOT_DISTRO}
 
     if ! [ "$?" == "0" ];
@@ -47,12 +52,14 @@ then
     fi
 
 
-    echo "- Preparing ${PROOT_DISTRO} ..."
+    echo "Preparing ${PROOT_DISTRO} ..."
 
-    echo "-- Installing packages ..."
+    echo "Installing packages ..."
+    echo "======================="
+    echo ""
 
     $SCRIPTS/prun_admin apt-get update
-    $SCRIPTS/prun_admin apt-get install -y screen wget
+    $SCRIPTS/prun_admin apt-get install -y gpg screen systemd wget
     $SCRIPTS/prun_admin useradd --create-home --shell /bin/bash puser
 
     if ! [ "$?" == "0" ];
@@ -60,16 +67,20 @@ then
         failed
     fi
 
-    echo "-- Installing scripts ..."
+    echo "Installing scripts ..."
 
     mkdir -p "$PROOT_PATH/root/scripts"
 
     cp "$SCRIPTS/enable_x11" "$PROOT_PATH/root/scripts"
-    cp "$SCRIPTS/install_box86_64" "$PROOT_PATH/root/scripts"
+    cp "$SCRIPTS/install_box86-64" "$PROOT_PATH/root/scripts"
     cp "$SCRIPTS/install_wine" "$PROOT_PATH/root/scripts"
 
+    echo "source \$HOME/.environment" >> "$PROOT_PATH/root/.bashrc"
+    echo "export PATH=\$PATH:\$HOME/scripts" >> "$PROOT_PATH/root/.environment"
 
+    echo ""
     echo "Finished."
+
     touch "$HOME/.proot_ready"
 fi
 

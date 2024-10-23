@@ -17,8 +17,9 @@ fi
 
 
 BIN=$PREFIX/bin
-SCRIPTS_REPO=https://raw.githubusercontent.com/arithesage/termux_things/\
-             refs/heads/main/termux-setup/scripts
+
+SCRIPTS_REPO=https://raw.githubusercontent.com/arithesage/termux_things
+SCRIPTS_REPO=$SCRIPTS_REPO/refs/heads/main/termux-setup/scripts
 
 
 
