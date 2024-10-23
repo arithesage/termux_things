@@ -1,0 +1,117 @@
+#!/bin/bash
+
+function failed
+{
+    echo "Failed. Aborting."
+    echo ""
+    exit 1
+}
+
+
+if [ -f "$HOME/.termux_setup_done" ];
+then
+    echo "Termux is already ready."
+    echo ""
+    exit 0
+fi
+
+
+BIN=$PREFIX/bin
+SCRIPTS_REPO=https://raw.githubusercontent.com/arithesage/termux_things/refs/heads/main/termux-setup/scripts
+
+
+
+
+echo "Performing a basic Termux setup..."
+echo "=================================="
+
+
+if ! [ -f "$HOME/.bashrc" ];
+then
+    cp "$PREFIX/etc/bash.bashrc" "$HOME/.bashrc"
+    echo "- Added basic .bashrc file"
+fi
+
+
+if ! [ -f "$HOME/.environment" ];
+then
+    touch "$HOME/.environment"
+    echo "source $HOME/.environment" >> "$HOME/.bashrc"
+    
+    echo "- Added .environment file"
+fi
+
+
+if ! [ -f "$BIN/sshd" ] || ! [ -f "$BIN/git" ];
+then
+    echo "Proceeding with the installing of some packages..."
+
+    pkg update
+
+    echo "- Installing OpenSSH and Wget..."
+    pkg install -y openssh wget
+
+    if ! [ "$?" == "0" ];
+    then
+        failed
+    fi
+fi
+
+
+if ! [ -f "$HOME/scripts" ];
+then
+    echo "Installing some useful scripts..."
+
+    mkdir "$HOME/scripts"
+
+    SCRIPTS="$HOME/scripts"
+
+    echo "export SCRIPTS=\"$HOME/scripts\"" >> "$HOME/.environment"
+    echo "export PATH=\"$PATH:$SCRIPTS\"" >> "$HOME/.environment"
+
+    wget $SCRIPTS_REPO/enable_x11 -O "$SCRIPTS/enable_x11"
+    wget $SCRIPTS_REPO/install_box86-64 -O "$SCRIPTS/install_box86-64"
+    wget $SCRIPTS_REPO/install_virgl -O "$SCRIPTS/install_virgl"
+    wget $SCRIPTS_REPO/install_wine -O "$SCRIPTS/install_wine"
+    wget $SCRIPTS_REPO/proot_admin -O "$SCRIPTS/proot_admin"
+    wget $SCRIPTS_REPO/prun -O "$SCRIPTS/prun"
+    wget $SCRIPTS_REPO/prun_admin -O "$SCRIPTS/prun_admin"
+    wget $SCRIPTS_REPO/prun_x11 -O "$SCRIPTS/prun_x11"
+    wget $SCRIPTS_REPO/setup_proot -O "$SCRIPTS/setup_proot"
+fi
+
+
+if ! [ -d "$HOME/storage" ];
+then
+    echo -n "- Preparing storage access. Please, grant permission when asked... "
+
+    termux-setup-storage
+
+    if ! [ "$?" == "0" ];
+    then
+        failed
+    else
+        echo "OK"        
+    fi
+fi
+
+
+if ![ -f "$HOME/.extsd_id" ];
+then
+    extsd_path = $(realpath "$HOME/storage/external-1")
+    extsd_id = ${extsd_path:9:9}
+
+    echo $extsd_id > "$HOME/.extsd_id"
+    echo "export EXT_SD=\"/storage/${extsd_id}\"" >> "$HOME/.environment"
+
+    echo ""
+    echo "- Added .extsd_id file with the SD card ID."
+    echo "  Also, an EXT_SD variable has been added to .environment with its"
+    echo "  full path (more confortable that writing '/storage/external-1')."
+    echo ""
+fi
+
+
+echo "Basic setup done. Enjoy Termux!"
+touch "$HOME/.termux_setup_done"
+

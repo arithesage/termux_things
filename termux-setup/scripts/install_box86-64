@@ -1,5 +1,12 @@
 #!/bin/bash
 
+if ! [ "$TERMUX_VERSION" == "" ];
+then
+    echo "This script is for Termux proot only."
+    exit 1
+fi
+
+
 function failed
 {
     echo "Installation failed!"
@@ -8,13 +15,74 @@ function failed
 }
 
 
-
-
-if [ -f "$HOME/.box64_installed" ];
+if [ -f "$HOME/.box86-64_ready" ];
 then
-    echo "Box64 is already installed."
+    echo "Box86 and Box64 are already installed."
     echo ""
     exit 0
+fi
+
+
+
+
+if ! [ -d /usr/share/keyrings ];
+then
+    mkdir /usr/share/keyrings
+fi
+
+
+
+
+echo "Installing Box86..."
+echo "==================="
+
+if ! [ -f "/usr/share/keyrings/box86-archive-keyring.gpg" ];
+then
+    wget -qO- "https://pi-apps-coders.github.io/box86-debs/KEY.gpg" | \
+    gpg --dearmor -o /usr/share/keyrings/box86-archive-keyring.gpg
+
+    if ! [ "$?" == "0" ];
+    then
+        echo "Could not intall the GPG key."
+        failed
+    fi
+
+    echo "- Added GPG key to keyrings."
+fi
+
+
+if ! [ -f "/etc/apt/sources/list.d/box86.sources" ];
+then
+    echo "Types: deb" > /var/tmp/box86.sources
+
+    echo "URIs: https://Pi-Apps-Coders.github.io/box86-debs/debian" \
+    >> /var/tmp/box86.sources
+
+    echo "Suites: ./" >> /var/tmp/box86.sources
+    echo "Signed-By: /usr/share/keyrings/box86-archive-keyring.gpg" \
+    >> /var/tmp/box86.sources
+
+    mv /var/tmp/box86.sources /etc/apt/sources.list.d/
+
+    echo "- Added sources list for APT."
+fi
+
+
+if ! [ -f "/usr/local/bin/box86" ];
+then
+    echo "- Updating APT sources..."
+    apt update
+    
+    echo "- Installing box86-android ..."
+    apt install -y box86-android
+
+    if ! [ "$?" == "0" ];
+    then
+        failed
+    fi
+
+    echo "Box86 for Android installed."
+    echo ""
 fi
 
 
@@ -23,12 +91,8 @@ echo "==================="
 
 if ! [ -f "/usr/share/keyrings/box64-archive-keyring.gpg" ];
 then
-    if ! [ -d /usr/share/keyrings ];
-    then
-        mkdir /usr/share/keyrings
-    fi
-
-    wget -qO- "https://pi-apps-coders.github.io/box64-debs/KEY.gpg" | gpg --dearmor -o /usr/share/keyrings/box64-archive-keyring.gpg
+    wget -qO- "https://pi-apps-coders.github.io/box64-debs/KEY.gpg" | \
+    gpg --dearmor -o /usr/share/keyrings/box64-archive-keyring.gpg
 
     if ! [ "$?" == "0" ];
     then
@@ -43,9 +107,13 @@ fi
 if ! [ -f "/etc/apt/sources/list.d/box64.sources" ];
 then
     echo "Types: deb" > /var/tmp/box64.sources
-    echo "URIs: https://Pi-Apps-Coders.github.io/box64-debs/debian" >> /var/tmp/box64.sources
+
+    echo "URIs: https://Pi-Apps-Coders.github.io/box64-debs/debian" \
+    >> /var/tmp/box64.sources
+
     echo "Suites: ./" >> /var/tmp/box64.sources
-    echo "Signed-By: /usr/share/keyrings/box64-archive-keyring.gpg" >> /var/tmp/box64.sources
+    echo "Signed-By: /usr/share/keyrings/box64-archive-keyring.gpg" \
+    >> /var/tmp/box64.sources
 
     mv /var/tmp/box64.sources /etc/apt/sources.list.d/
 
@@ -74,5 +142,5 @@ fi
 echo "Finished!"
 echo ""
 
-touch $HOME/.box64_installed
+touch $HOME/.box86-64_ready
 

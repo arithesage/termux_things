@@ -7,9 +7,22 @@ function failed
 }
 
 
+PROOT_DISTRO="debian"
+PROOT_PATH="$PREFIX/var/lib/proot-distro/installed-rootfs/${PROOT_DISTRO}"
+SCRIPTS=$HOME/scripts
 
 
-if ! [ -d "$PREFIX/var/lib/proot-distro/installed-rootfs/debian" ];
+
+
+if ! [ -f "$HOME/.proot_ready" ];
+then
+    echo "Proot distro already setup."
+    echo ""
+    exit 0
+fi
+
+
+if ! [ -d "$PROOT_PATH" ];
 then
     if ! [ -f "${PREFIX}/bin/proot-distro" ];
     then
@@ -25,8 +38,8 @@ then
     fi
 
 
-    echo "- Installing debian ..."
-    proot-distro install debian
+    echo "- Installing ${PROOT_DISTRO} ..."
+    proot-distro install ${PROOT_DISTRO}
 
     if ! [ "$?" == "0" ];
     then
@@ -34,7 +47,9 @@ then
     fi
 
 
-    echo "- Preparing debian ..."
+    echo "- Preparing ${PROOT_DISTRO} ..."
+
+    echo "-- Installing packages ..."
 
     $HOME/prun_admin apt-get update
     $HOME/prun_admin apt-get install -y screen wget
@@ -45,5 +60,16 @@ then
         failed
     fi
 
+    echo "-- Installing scripts ..."
+
+    mkdir -p "$PROOT_PATH/root/scripts"
+
+    cp "$SCRIPTS/enable_x11" "$PROOT_PATH/root/scripts"
+    cp "$SCRIPTS/install_box86_64" "$PROOT_PATH/root/scripts"
+    cp "$SCRIPTS/install_wine" "$PROOT_PATH/root/scripts"
+
+
     echo "Finished."
+    touch "$HOME/.proot_ready"
 fi
+

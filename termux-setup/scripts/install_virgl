@@ -7,52 +7,56 @@ function failed
 }
 
 
-
-
-if [ -f "$HOME/.gl_already_setup" ];
+if [ -f "$HOME/.virgl_already_setup" ];
 then
     echo "VirGL already setup."
     exit 0
 fi
 
 
+
+
 echo "Setting up VirGL..."
 echo "==================="
-echo ""
-
 
 APT_REPOS=$PREFIX/etc/apt/sources.list.d
 
 if ! [ -f ${APT_REPOS}/tur.list ];
 then
+    echo "- Installing 'tur' repository ..."
+
     pkg update
     pkg install -y tur-repo
 
     if ! [ "$?" == "0" ];
     then
         failed
-    fi
-
-    echo "- Installed 'tur' repository."
+    fi    
 fi
 
 
+echo "- Installing mesa, virgl and vulkan packages ..."
 pkg install -y mesa-zink virglrenderer-mesa-zink vulkan-loader-android
-
 
 if ! [ "$?" == "0" ];
 then
     failed
 fi
 
+echo "- Downloading .virgl_environment config file ..."
+wget https://raw.githubusercontent.com/arithesage/termux_things/ \
+     refs/heads/main/termux-setup/.virgl_environment \
+     -O "$HOME/.virgl_environment"
 
-echo "- Installed mesa, virgl and vulkan packages."
+if ! [ "$?" == "0" ];
+then
+    failed
+fi
 
 echo "source $HOME/.virgl_environment" >> $HOME/.bashrc
-echo "" >> $HOME/.bashrc
 
 
 echo "VirGL setup finished"
 
-touch $HOME/.gl_already_setup
+touch $HOME/.virgl_already_setup
 

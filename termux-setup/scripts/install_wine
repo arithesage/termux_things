@@ -1,5 +1,12 @@
 #!/bin/bash
 
+if ! [ "$TERMUX_VERSION" == "" ];
+then
+    echo "This script is for Termux proot only."
+    exit 1
+fi
+
+
 function failed
 {
     echo "Failed!"
