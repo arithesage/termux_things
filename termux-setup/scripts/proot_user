@@ -1,0 +1,4 @@
+#!/bin/bash
+
+proot-distro login ${PROOT_DISTRO} --user ${PROOT_USER} --bin ${EXT_SD}:/mnt/extsd --shared-tmp
+

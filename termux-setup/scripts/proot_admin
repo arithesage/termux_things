@@ -1,4 +1,4 @@
 #!/bin/bash
 
-proot-distro login debian --bind ${EXT_SD}:/mnt/extsd --shared-tmp
+proot-distro login ${PROOT_DISTRO} --bind ${EXT_SD}:/mnt/extsd --shared-tmp
 

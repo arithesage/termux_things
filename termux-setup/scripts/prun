@@ -2,5 +2,5 @@
 
 CMDLINE=$*
 
-proot-distro login debian --bind ${EXT_SD}:/mnt/extsd --user puser --shared-tmp -- ${CMDLINE}
+proot-distro login ${PROOT_DISTRO} --bind ${EXT_SD}:/mnt/extsd --user ${PROOT_USER} --shared-tmp -- ${CMDLINE}
 
