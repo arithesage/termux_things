@@ -31,6 +31,9 @@ echo "=================================="
 if ! [ -f "$HOME/.bashrc" ];
 then
     cp "$PREFIX/etc/bash.bashrc" "$HOME/.bashrc"
+
+    echo "sshd" >> "$HOME/.bashrc"
+
     echo "- Added basic .bashrc file"
 fi
 
@@ -44,7 +47,7 @@ then
 fi
 
 
-if ! [ -f "$BIN/sshd" ] || ! [ -f "$BIN/git" ];
+if ! [ -f "$BIN/sshd" ] || ! [ -f "$BIN/wget" ];
 then
     echo "- Proceeding with the installing of some packages..."
     echo ""
@@ -84,6 +87,7 @@ then
     wget $SCRIPTS_REPO/install_box86-64 -O "$SCRIPTS/install_box86-64"
     wget $SCRIPTS_REPO/install_virgl -O "$SCRIPTS/install_virgl"
     wget $SCRIPTS_REPO/install_wine -O "$SCRIPTS/install_wine"
+    wget $SCRIPTS_REPO/pexec -O "$SCRIPTS/pexec"
     wget $SCRIPTS_REPO/proot_admin -O "$SCRIPTS/proot_admin"
     wget $SCRIPTS_REPO/prun -O "$SCRIPTS/prun"
     wget $SCRIPTS_REPO/prun_admin -O "$SCRIPTS/prun_admin"
@@ -109,12 +113,31 @@ then
     fi
 fi
 
-echo ""
-echo "If you have a external SD card (a microSD), execute 'find_extsd'"
-echo "command. It could be executed after termux-setup-storage, but"
-echo "it seems always runs before storage folder is created, and so, it"
-echo "doesn't find any 'external-1' folder (because there is none)."
-echo ""
+read -p "Press ENTER for continue after granting permission." proceed
+
+if ! [ -d "$HOME/storage/external-1" ];
+then
+    echo "No external SD card detected."
+    echo "Skipping setting up extsd_id."
+    echo ""
+    exit 0
+
+else
+    if ! [ -f "$HOME/.extsd_id" ];
+    then
+        extsd_path=$(realpath "$HOME/storage/external-1")
+        extsd_id=${extsd_path:9:9}
+
+        echo $extsd_id > "$HOME/.extsd_id"
+        echo "export EXT_SD=\"/storage/${extsd_id}\"" >> "$HOME/.environment"
+
+        echo ""
+        echo "- Added .extsd_id file with the SD card ID."
+        echo "  Also, an EXT_SD variable has been added to .environment with its"
+        echo "  full path (more confortable that writing '/storage/external-1')."
+        echo ""
+    fi
+fi
 
 echo "Basic setup done. Restart Termux or execute '. $HOME/.environment'"
 echo "Enjoy Termux!"

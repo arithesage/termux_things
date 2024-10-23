@@ -1,0 +1,70 @@
+#!/bin/bash
+
+function usage
+{
+    echo "Usage: pexec <executable> [args]"
+    echo "       pexec [-h|--help]"
+    echo ""
+    echo "If the executable is a Windows x86 .exe, it will run with"
+    echo "box86. Box64 will be used for x64 executables, and in case"
+    echo "of an ARM on, it will be executed as is."
+    echo ""
+}
+
+
+EXEC=$1
+ARGS=$2
+
+if [ "$EXEC" == "" ];
+then
+    usage
+    exit 1
+fi
+
+
+
+
+FILE_TYPE=$(file -L "$EXEC")
+
+echo ${FILE_TYPE} | grep "linux-x86" > /dev/null
+LINUX_X86=$?
+
+echo ${FILE_TYPE} | grep "linux-x86_64" > /dev/null
+LINUX_X64=$?
+
+echo ${FILE_TYPE} | grep "PE32" > /dev/null
+WIN_X86=$?
+
+echo ${FILE_TYPE} | grep "PE32+" > /dev/null
+WIN_X64=$?
+
+if [ "$LINUX_X86" == "0" ];
+then
+    box86 "$EXEC" $ARGS
+
+elif [ "$LINUX_X64" == "0" ];
+    box64 "$EXEC" $ARGS
+
+elif [ "$WIN_X86" == "0" ];
+    box86 wine "$EXEC" $ARGS
+
+elif [ "$WIN_X64" == "0" ];
+    box64 wine "$EXEC" $ARGS
+else
+    "$EXEC" $ARGS
+fi
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

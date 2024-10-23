@@ -60,7 +60,7 @@ then
     echo ""
 
     $SCRIPTS/prun_admin apt-get update
-    $SCRIPTS/prun_admin apt-get install -y gpg screen systemd wget
+    $SCRIPTS/prun_admin apt-get install -y gpg screen wget
     $SCRIPTS/prun_admin useradd --create-home --shell /bin/bash puser
 
     if ! [ "$?" == "0" ];
