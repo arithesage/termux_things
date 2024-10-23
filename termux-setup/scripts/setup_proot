@@ -14,7 +14,7 @@ SCRIPTS=$HOME/scripts
 
 
 
-if ! [ -f "$HOME/.proot_ready" ];
+if [ -f "$HOME/.proot_ready" ];
 then
     echo "Proot distro already setup."
     echo ""
@@ -51,9 +51,9 @@ then
 
     echo "-- Installing packages ..."
 
-    $HOME/prun_admin apt-get update
-    $HOME/prun_admin apt-get install -y screen wget
-    $HOME/prun_admin useradd --create-home --shell /bin/bash puser
+    $SCRIPTS/prun_admin apt-get update
+    $SCRIPTS/prun_admin apt-get install -y screen wget
+    $SCRIPTS/prun_admin useradd --create-home --shell /bin/bash puser
 
     if ! [ "$?" == "0" ];
     then

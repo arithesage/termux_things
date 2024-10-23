@@ -1,7 +1,6 @@
 #!/bin/bash
 
 CMDLINE=$*
-EXT_SD=/storage/3026-AF9C
 
 proot-distro login debian --bind ${EXT_SD}:/mnt/extsd --user puser --shared-tmp -- ${CMDLINE}
 

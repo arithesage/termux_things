@@ -17,7 +17,8 @@ fi
 
 
 BIN=$PREFIX/bin
-SCRIPTS_REPO=https://raw.githubusercontent.com/arithesage/termux_things/refs/heads/main/termux-setup/scripts
+SCRIPTS_REPO=https://raw.githubusercontent.com/arithesage/termux_things/\
+             refs/heads/main/termux-setup/scripts
 
 
 
@@ -78,6 +79,7 @@ then
     echo "export PATH=\"$PATH:$SCRIPTS\"" >> "$HOME/.environment"
 
     wget $SCRIPTS_REPO/enable_x11 -O "$SCRIPTS/enable_x11"
+    wget $SCRIPTS_REPO/find_extsd -O "$SCRIPTS/find_extsd"
     wget $SCRIPTS_REPO/install_box86-64 -O "$SCRIPTS/install_box86-64"
     wget $SCRIPTS_REPO/install_virgl -O "$SCRIPTS/install_virgl"
     wget $SCRIPTS_REPO/install_wine -O "$SCRIPTS/install_wine"
@@ -87,7 +89,7 @@ then
     wget $SCRIPTS_REPO/prun_x11 -O "$SCRIPTS/prun_x11"
     wget $SCRIPTS_REPO/setup_proot -O "$SCRIPTS/setup_proot"
 
-    chmod +x $SCRIPTS
+    chmod -R +x $SCRIPTS
 fi
 
 
