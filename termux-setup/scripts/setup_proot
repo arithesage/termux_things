@@ -7,7 +7,7 @@ function failed
 }
 
 
-export PROOT_DISTRO="ubuntu"
+export PROOT_DISTRO="debian"
 export PROOT_USER="puser"
 PROOT_PATH="$PREFIX/var/lib/proot-distro/installed-rootfs/${PROOT_DISTRO}"
 
@@ -84,9 +84,16 @@ then
     echo "source \$HOME/.environment" >> "$PROOT_PATH/root/.bashrc"
     echo "export PATH=\$PATH:\$HOME/scripts" >> "$PROOT_PATH/root/.environment"
 
-    echo "export PROOT_DISTRO=\"${PROOT_DISTRO}\"" >> "$HOME/.environment"
-    echo "export PROOT_PATH=\"${PROOT_PATH}\"" >> "$HOME/.environment"
-    echo "export PROOT_USER=\"${PROOT_USER}\"" >> "$HOME/.environment"
+    echo "export PROOT_DISTRO=\"${PROOT_DISTRO}\"" > "$HOME/.proot_environment"
+    echo "export PROOT_PATH=\"${PROOT_PATH}\"" >> "$HOME/.proot_environment"
+    echo "export PROOT_USER=\"${PROOT_USER}\"" >> "$HOME/.proot_environment"
+
+    grep .proot_environment "$HOME/.environment" > /dev/null
+
+    if ! [ "$?" == "0" ];
+    then
+        echo "source $HOME/.proot_environment" >> "$HOME/.environment"
+    fi
 
     echo ""
     echo "Finished."
