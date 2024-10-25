@@ -17,9 +17,11 @@ fi
 
 
 BIN=$PREFIX/bin
+TMP_DIR=$PREFIX/tmp
 
 SCRIPTS_REPO=https://raw.githubusercontent.com/arithesage/termux_things
 SCRIPTS_REPO=$SCRIPTS_REPO/refs/heads/main/termux-setup/scripts
+SETUP_REPO=https://github.com/arithesage/termux_things.git
 
 
 
@@ -69,11 +71,11 @@ then
     pkg update
 
     echo ""
-    echo "Installing NeoVim, OpenSSH and Wget..."
-    echo "======================================"
+    echo "Installing packages ..."
+    echo "======================="
     echo ""
 
-    pkg install -y neovim, openssh wget
+    pkg install -y git neovim openssh rclone wget
 
     if ! [ "$?" == "0" ];
     then
@@ -89,24 +91,34 @@ then
     echo "================================="
     echo ""
 
-    mkdir "$HOME/scripts"
+    git clone $SETUP_REPO "$PREFIX/tmp/termux_things" --depth=1
+
+    if ! [ "$?" == "0" ];
+    then
+        echo "Could not clone the setup repo."
+        failed
+    fi
+
+    cp -r "$TMP_DIR/termux_things/termux-setup/scripts" "$HOME/scripts"
+
+#    mkdir "$HOME/scripts"
 
     SCRIPTS="$HOME/scripts"
 
     echo "export SCRIPTS=\"$HOME/scripts\"" >> "$HOME/.environment"
     echo "export PATH=\"$PATH:$SCRIPTS\"" >> "$HOME/.environment"
 
-    wget $SCRIPTS_REPO/enable_x11 -O "$SCRIPTS/enable_x11"
-    wget $SCRIPTS_REPO/find_extsd -O "$SCRIPTS/find_extsd"
-    wget $SCRIPTS_REPO/install_box86-64 -O "$SCRIPTS/install_box86-64"
-    wget $SCRIPTS_REPO/install_virgl -O "$SCRIPTS/install_virgl"
-    wget $SCRIPTS_REPO/install_wine -O "$SCRIPTS/install_wine"
-    wget $SCRIPTS_REPO/pexec -O "$SCRIPTS/pexec"
-    wget $SCRIPTS_REPO/proot_admin -O "$SCRIPTS/proot_admin"
-    wget $SCRIPTS_REPO/prun -O "$SCRIPTS/prun"
-    wget $SCRIPTS_REPO/prun_admin -O "$SCRIPTS/prun_admin"
-    wget $SCRIPTS_REPO/prun_x11 -O "$SCRIPTS/prun_x11"
-    wget $SCRIPTS_REPO/setup_proot -O "$SCRIPTS/setup_proot"
+#    wget $SCRIPTS_REPO/enable_x11 -O "$SCRIPTS/enable_x11"
+#    wget $SCRIPTS_REPO/find_extsd -O "$SCRIPTS/find_extsd"
+#    wget $SCRIPTS_REPO/install_box86-64 -O "$SCRIPTS/install_box86-64"
+#    wget $SCRIPTS_REPO/install_virgl -O "$SCRIPTS/install_virgl"
+#    wget $SCRIPTS_REPO/install_wine -O "$SCRIPTS/install_wine"
+#    wget $SCRIPTS_REPO/pexec -O "$SCRIPTS/pexec"
+#    wget $SCRIPTS_REPO/proot_admin -O "$SCRIPTS/proot_admin"
+#    wget $SCRIPTS_REPO/prun -O "$SCRIPTS/prun"
+#    wget $SCRIPTS_REPO/prun_admin -O "$SCRIPTS/prun_admin"
+#    wget $SCRIPTS_REPO/prun_x11 -O "$SCRIPTS/prun_x11"
+#    wget $SCRIPTS_REPO/setup_proot -O "$SCRIPTS/setup_proot"
 
     chmod -R +x $SCRIPTS
 fi
