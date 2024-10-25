@@ -57,7 +57,7 @@ fi
 if ! [ -f "$HOME/.environment" ];
 then
     touch "$HOME/.environment"
-    echo "source $HOME/.environment" >> "$HOME/.bashrc"
+    echo "source \$HOME/.environment" >> "$HOME/.bashrc"
     
     echo "- Added .environment file"
 fi
@@ -105,8 +105,8 @@ then
 
     SCRIPTS="$HOME/scripts"
 
-    echo "export SCRIPTS=\"$HOME/scripts\"" >> "$HOME/.environment"
-    echo "export PATH=\"$PATH:$SCRIPTS\"" >> "$HOME/.environment"
+    echo "export SCRIPTS=\"\$HOME/scripts\"" >> "$HOME/.environment"
+    echo "export PATH=\"\$PATH:$SCRIPTS\"" >> "$HOME/.environment"
 
 #    wget $SCRIPTS_REPO/enable_x11 -O "$SCRIPTS/enable_x11"
 #    wget $SCRIPTS_REPO/find_extsd -O "$SCRIPTS/find_extsd"

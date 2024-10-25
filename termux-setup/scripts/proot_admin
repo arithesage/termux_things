@@ -1,4 +1,9 @@
 #!/bin/bash
 
-proot-distro login ${PROOT_DISTRO} --bind ${EXT_SD}:/mnt/extsd --shared-tmp
+if ! [ "$EXT_SD" == "" ];
+then
+    SD_BINDING="--bind ${EXT_SD}:/mnt/extsd"
+fi
+
+proot-distro login ${PROOT_DISTRO} ${SD_BINDING} --shared-tmp
 

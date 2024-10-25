@@ -72,10 +72,10 @@ then
 
     echo "Installing scripts ..."
 
-    mkdir -p "$PROOT_PATH/root/scripts"
+#   mkdir -p "$PROOT_PATH/root/scripts"
 
-    cp -r "$SCRIPTS/proot" "$PROOT_PATH/root/scripts"
-    cp -r "$SCRIPTS/puser/*" "$PROOT_PATH/usr/local/bin/"    
+    cp -r $SCRIPTS/proot "$PROOT_PATH/root/scripts"
+    cp $SCRIPTS/puser/* "$PROOT_PATH/usr/local/bin/"    
 
     chmod -R +x "$PROOT_PATH/root/scripts"
     chmod -R +x "$PROOT_PATH/usr/local/bin"
@@ -91,7 +91,7 @@ then
 
     if ! [ "$?" == "0" ];
     then
-        echo "source $HOME/.proot_environment" >> "$HOME/.environment"
+        echo "source \$HOME/.proot_environment" >> "$HOME/.environment"
     fi
 
     echo ""

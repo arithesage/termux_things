@@ -1,8 +1,10 @@
 #!/bin/bash
 
-EXE=$1
-ARGS=$2
+if ! [ "$EXT_SD" == "" ];
+then
+    SD_BINDING="--bind ${EXT_SD}:/mnt/extsd"
+fi
 
-proot-distro login ${PROOT_DISTRO} --user ${PROOT_USER} --shared-tmp $HOME/scripts/enable_x11
-proot-distro login ${PROOT_DISTRO} --user ${PROOT_USER} --shared-tmp $EXE $ARGS
+proot-distro login ${PROOT_DISTRO} --user ${PROOT_USER} ${SD_BINDING} --shared-tmp $HOME/scripts/enable_x11
+proot-distro login ${PROOT_DISTRO} --user ${PROOT_USER} ${SD_BINDING} --shared-tmp $*
 
