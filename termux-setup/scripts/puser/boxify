@@ -11,7 +11,7 @@ function usage
 }
 
 
-function boxify
+function boxify_exec
 {
     EXEC=$1
     LAUNCHER=$2
@@ -21,16 +21,17 @@ function boxify
     if [ -f "$SCRIPT" ];
     then
         echo "ERROR: Failed boxifing '${EXEC}'."
-	    echo "       An script '${SCRIPT}' already exists."
-        echo ""
-        
+	echo "       An script '${SCRIPT}' already exists."
+	echo ""
         exit 1
     fi
 
-    echo "#!/bin/bash" > $SCRIPT
-    echo "" >> $SCRIPT
-    echo "${LAUNCHER} $EXEC $*" >> $SCRIPT
-    echo "" >> $SCRIPT
+    echo "#!/bin/bash" > "$SCRIPT"
+    echo "" >> "$SCRIPT"
+    echo "${LAUNCHER} $EXEC \$*" >> "$SCRIPT"
+    echo "" >> "$SCRIPT"
+
+    chmod +x "$SCRIPT"
 
     echo "'${EXEC}' boxified with '${LAUNCHER}' in '${SCRIPT}'."
     echo ""
@@ -51,19 +52,20 @@ EXEC=$1
 
 FILE_TYPE=$(file -L "$EXEC")
 
-echo ${FILE_TYPE} | grep "linux-x86" > /dev/null
+echo ${FILE_TYPE} | grep "ELF 32-bit" > /dev/null
 LINUX_X86=$?
 
-echo ${FILE_TYPE} | grep "linux-x86_64" > /dev/null
+echo ${FILE_TYPE} | grep "ELF 64-bit" > /dev/null
 LINUX_X64=$?
 
 
 if [ "$LINUX_X86" == "0" ];
 then
-    boxify "$EXEC" box86
+    boxify_exec "$EXEC" box86
 
 elif [ "$LINUX_X64" == "0" ];
-    boxify "$EXEC" box64
+then
+    boxify_exec "$EXEC" box64
 
 else
     echo "The file '${EXEC}' isn't an Linux x86 or x86_64 executable."
