@@ -129,7 +129,6 @@ then
     echo "No external SD card detected."
     echo "Skipping setting up extsd_id."
     echo ""
-    exit 0
 
 else
     if ! [ -f "$HOME/.extsd_id" ];
