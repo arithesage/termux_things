@@ -62,7 +62,7 @@ then
     echo ""
 
     $SCRIPTS/prun_admin apt-get update
-    $SCRIPTS/prun_admin apt-get install -y gpg screen wget
+    $SCRIPTS/prun_admin apt-get install -y gpg man neovim screen wget
     $SCRIPTS/prun_admin useradd --create-home --shell /bin/bash ${PROOT_USER}
 
     if ! [ "$?" == "0" ];
@@ -74,12 +74,11 @@ then
 
     mkdir -p "$PROOT_PATH/root/scripts"
 
-    cp "$SCRIPTS/enable_x11" "$PROOT_PATH/root/scripts"
-    cp "$SCRIPTS/install_box86-64" "$PROOT_PATH/root/scripts"
-    cp "$SCRIPTS/install_wine" "$PROOT_PATH/root/scripts"
-    cp "$SCRIPTS/pexec" "$PROOT_PATH/usr/local/bin/"
+    cp -r "$SCRIPTS/proot" "$PROOT_PATH/root/scripts"
+    cp -r "$SCRIPTS/puser/*" "$PROOT_PATH/usr/local/bin/"    
 
-    chmod +x "$PROOT_PATH/usr/local/bin/pexec"
+    chmod -R +x "$PROOT_PATH/root/scripts"
+    chmod -R +x "$PROOT_PATH/usr/local/bin"
 
     echo "source \$HOME/.environment" >> "$PROOT_PATH/root/.bashrc"
     echo "export PATH=\$PATH:\$HOME/scripts" >> "$PROOT_PATH/root/.environment"

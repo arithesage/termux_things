@@ -1,7 +1,4 @@
 #!/bin/bash
 
-EXEC=$1
-ARGS=$2
-
-prun box86 "$EXEC" "$ARGS"
+prun box86 $*
 

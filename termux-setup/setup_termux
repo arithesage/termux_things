@@ -69,11 +69,11 @@ then
     pkg update
 
     echo ""
-    echo "Installing OpenSSH and Wget..."
-    echo "================================"
+    echo "Installing NeoVim, OpenSSH and Wget..."
+    echo "======================================"
     echo ""
 
-    pkg install -y openssh wget
+    pkg install -y neovim, openssh wget
 
     if ! [ "$?" == "0" ];
     then

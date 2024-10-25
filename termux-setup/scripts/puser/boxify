@@ -1,0 +1,74 @@
+#!/bin/bash
+
+function usage
+{
+    echo "Usage: boxify <executable file>"
+    echo ""
+    echo "Creates an script in /usr/local/bin that executes the file"
+    echo "with Box86 or Box64, depending of the architecture of the"
+    echo "executable."
+    echo ""
+}
+
+
+function boxify
+{
+    EXEC=$1
+    LAUNCHER=$2
+    EXEC_FILENAME=$(basename $EXEC)
+    SCRIPT="/usr/local/bin/${EXEC_FILENAME}"
+
+    if [ -f "$SCRIPT" ];
+    then
+        echo "ERROR: Failed boxifing '${EXEC}'."
+	    echo "       An script '${SCRIPT}' already exists."
+        echo ""
+        
+        exit 1
+    fi
+
+    echo "#!/bin/bash" > $SCRIPT
+    echo "" >> $SCRIPT
+    echo "${LAUNCHER} $EXEC $*" >> $SCRIPT
+    echo "" >> $SCRIPT
+
+    echo "'${EXEC}' boxified with '${LAUNCHER}' in '${SCRIPT}'."
+    echo ""
+}
+
+
+if [ "$1" == "" ] || [ "$1" == "-h" ] || [ "$1" == "--help" ];
+then
+    usage
+    exit 1
+fi
+
+
+
+
+EXEC=$1
+
+
+FILE_TYPE=$(file -L "$EXEC")
+
+echo ${FILE_TYPE} | grep "linux-x86" > /dev/null
+LINUX_X86=$?
+
+echo ${FILE_TYPE} | grep "linux-x86_64" > /dev/null
+LINUX_X64=$?
+
+
+if [ "$LINUX_X86" == "0" ];
+then
+    boxify "$EXEC" box86
+
+elif [ "$LINUX_X64" == "0" ];
+    boxify "$EXEC" box64
+
+else
+    echo "The file '${EXEC}' isn't an Linux x86 or x86_64 executable."
+    echo ""
+
+    exit 1
+fi
+

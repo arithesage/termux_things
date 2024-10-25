@@ -1,0 +1,3 @@
+#!/bin/bash
+
+box86 /opt/wine-staging/bin/wine $*

@@ -1,0 +1,172 @@
+#!/bin/bash
+
+if ! [ "$TERMUX_VERSION" == "" ];
+then
+    echo "This script is for Termux proot only."
+    exit 1
+fi
+
+
+function failed
+{
+    echo "Failed. Aborting."
+    exit 1
+}
+
+
+
+
+if [ -f "$HOME/.wine_installed" ];
+then
+    echo "Wine is already installed."
+    echo ""
+    exit 0
+fi
+
+
+if ! [ -f "/usr/lib/arm-linux-gnueabihf/libvkd3d.so.1" ];
+then
+    echo "Installing dependencies..."
+    echo "=========================="
+    echo ""
+
+    dpkg --print-foreign-architectures | grep armhf > /dev/null
+
+    if ! [ "$?" == "0" ];
+    then
+        dpkg --add-architecture armhf
+
+        if ! [ "$?" == "0" ];
+        then
+            failed
+        fi
+
+        apt-get update
+
+        echo "- Added armhf architecture."
+    fi
+
+    DEB_DEPS="libasound2:armhf libc6:armhf libglib2.0-0:armhf libgphoto2-6:armhf"
+    DEB_DEPS+=" libgphoto2-port12:armhf libgstreamer-plugins-base1.0-0:armhf"
+    DEB_DEPS+=" libgstreamer1.0-0:armhf libldap-2.5-0:armhf libopenal1:armhf"
+    DEB_DEPS+=" libpcap0.8:armhf libpulse0:armhf libsane1:armhf libudev1:armhf"
+    DEB_DEPS+=" libusb-1.0-0:armhf libvkd3d1:armhf libx11-6:armhf libxext6:armhf"
+    DEB_DEPS+=" libasound2-plugins:armhf ocl-icd-libopencl1:armhf"
+    DEB_DEPS+=" libncurses6:armhf libncurses5:armhf libcap2-bin:armhf"
+    DEB_DEPS+=" libcups2:armhf libdbus-1-3:armhf libfontconfig1:armhf"
+    DEB_DEPS+=" libfreetype6:armhf libglu1-mesa:armhf libglu1:armhf"
+    DEB_DEPS+=" libgnutls30:armhf libgssapi-krb5-2:armhf libkrb5-3:armhf"
+    DEB_DEPS+=" libodbc1:armhf libosmesa6:armhf libsdl2-2.0-0:armhf"
+    DEB_DEPS+=" libv4l-0:armhf libxcomposite1:armhf libxcursor1:armhf"
+    DEB_DEPS+=" libxfixes3:armhf libxi6:armhf libxinerama1:armhf libxrandr2:armhf"
+    DEB_DEPS+=" libxrender1:armhf libxxf86vm1:armhf"
+
+    apt-get install -y $DEB_DEPS
+
+    if ! [ "$?" == "0" ];
+    then
+        echo "Some dependencies failed installing."
+        failed
+    fi
+fi
+
+
+echo "Installing WINE..."
+echo "=================="
+
+dpkg --print-foreign-architectures | grep i386 > /dev/null
+
+if ! [ "$?" == "0" ];
+then
+    dpkg --add-architecture i386
+
+    if ! [ "$?" == "0" ];
+    then
+        failed
+    fi
+
+    echo "- Added i386 architecture."
+
+
+    dpkg --add-architecture amd64
+
+    if ! [ "$?" == "0" ];
+    then
+        failed
+    fi
+
+    echo "- Added amd64 architecture."
+fi
+
+
+# We are going to install WINE manually (because Box86-64 needs it), but
+# i install the GPG key anyways because i don't know if it is needed.
+if ! [ -f /etc/apt/keyrings/winehq-archive.key ];
+then
+    if ! [ -d /etc/apt/keyrings ];
+    then
+        mkdir /etc/apt/keyrings
+    fi
+
+    wget -O /etc/apt/keyrings/winehq-archive.key https://dl.winehq.org/wine-builds/winehq.key
+
+    if ! [ "$?" == "0" ];
+    then
+        failed
+    fi
+
+    echo "- Added winehq GPG key to keyrings."
+fi
+
+
+if ! [ -f "/usr/bin/wine" ];
+then
+    echo "Downloading WINE packages for manually install..."
+    echo "================================================="
+    echo ""
+
+    wget https://dl.winehq.org/wine-builds/debian/dists/bookworm/main/binary-i386/wine-staging_9.20~bookworm-1_i386.deb
+    wget https://dl.winehq.org/wine-builds/debian/dists/bookworm/main/binary-i386/wine-staging-i386_9.20~bookworm-1_i386.deb
+
+    wget https://dl.winehq.org/wine-builds/debian/dists/bookworm/main/binary-amd64/wine-staging_9.20~bookworm-1_amd64.deb
+    wget https://dl.winehq.org/wine-builds/debian/dists/bookworm/main/binary-amd64/wine-staging-amd64_9.20~bookworm-1_amd64.deb
+
+    if ! [ "$?" == "0" ];
+    then
+        failed
+    fi
+
+
+    echo ""
+    echo "Extracting..."
+    echo "============="
+    echo ""
+
+    dpkg-deb -x wine-staging_9.20~bookworm-1_i386.deb wine
+    dpkg-deb -x wine-staging-i386_9.20~bookworm-1_i386.deb wine
+    dpkg-deb -x wine-staging_9.20~bookworm-1_amd64.deb wine
+    dpkg-deb -x wine-staging-amd64_9.20~bookworm-1_amd64.deb wine
+
+    if ! [ "$?" == "0" ];
+    then
+        failed
+    fi
+
+    if ! [ -d "/opt" ];
+    then
+        mkdir /opt
+    fi
+
+    ln -s "$HOME/wine/opt/wine-staging" "/opt/wine-staging"
+    ln -s "$HOME/wine/usr/share/doc/wine-staging" "/usr/share/doc/wine-staging"
+    ln -s "$HOME/wine/usr/share/doc/wine-staging-i386" "/usr/share/doc/wine-staging-i386"
+    ln -s "$HOME/wine/usr/share/doc/wine-staging-amd64" "/usr/share/doc/wine-staging-amd64"
+    ln -s "$HOME/wine/usr/share/lintian/overrides/wine-staging-i386" "/usr/share/lintian/overrides/wine-staging-i386"
+    ln -s "$HOME/wine/usr/share/lintian/overrides/wine-staging-amd64" "/usr/share/lintian/overrides/wine-staging-amd64"
+
+    echo "Finished WINE setup!"
+    echo ""
+fi
+
+touch "$HOME/.wine_installed"
+
