@@ -164,6 +164,12 @@ then
     ln -s "$HOME/wine/usr/share/lintian/overrides/wine-staging-i386" "/usr/share/lintian/overrides/wine-staging-i386"
     ln -s "$HOME/wine/usr/share/lintian/overrides/wine-staging-amd64" "/usr/share/lintian/overrides/wine-staging-amd64"
 
+    boxify "$HOME/wine/opt/wine-staging/bin/wine"
+    boxify "$HOME/wine/opt/wine-staging/bin/wine64"
+    boxify "$HOME/wine/opt/wine-staging/bin/wineboot"
+    boxify "$HOME/wine/opt/wine-staging/bin/winecfg"
+    boxify "$HOME/wine/opt/wine-staging/bin/wineserver"
+
     echo "Finished WINE setup!"
     echo ""
 fi
