@@ -7,13 +7,58 @@ then
 fi
 
 
+function download_wine
+{
+    WINE_VERSION="$1"
+    WINE_VERSION_NUM="$2"    
+    DISTRO="$3"
+    DISTRO_VERSION="$4"
+    ARCH="$5"
+
+    PACKAGE_1="wine-${WINE_VERSION}_${WINE_VERSION_NUM}~${DISTRO_VERSION}"
+    PACKAGE_1+="-1_${ARCH}.deb"
+
+    PACKAGE_2="wine-${WINE_VERSION}-${ARCH}_${WINE_VERSION_NUM}"
+    PACKAGE_2+="~${DISTRO_VERSION}-1_${ARCH}.deb"
+
+    BASE_URL="https://dl.winehq.org/wine-builds/${DISTRO}/dists"
+    BASE_URL="/${DISTRO_VERSION}/main/binary-${ARCH}"
+
+    URL_1="https://dl.winehq.org/wine-builds/${DISTRO}/dists"
+    URL_1+="/${DISTRO_VERSION}/main/binary-${ARCH}"
+    URL_1+="/${PACKAGE_1}"
+
+
+    echo "Downloading ${PACKAGE_1} ..."
+    echo "============================"
+    echo ""
+
+    wget ${BASE_URL}/${PACKAGE_1}
+    
+    if ! [ "$?" == "0" ];
+    then
+        failed
+    fi
+
+
+    echo "Downloading ${PACKAGE_2} ..."
+    echo "============================"
+    echo ""
+
+    wget ${BASE_URL}/${PACKAGE_2}
+
+    if ! [ "$?" == "0" ];
+    then
+        failed
+    fi
+}
+
+
 function failed
 {
     echo "Failed. Aborting."
     exit 1
 }
-
-
 
 
 if [ -f "$HOME/.wine_installed" ];
@@ -22,6 +67,11 @@ then
     echo ""
     exit 0
 fi
+
+
+download_wine staging 9.20 debian bookworm i386
+download_wine staging 9.20 debian bookworm amd64
+
 
 
 if ! [ -f "/usr/lib/arm-linux-gnueabihf/libvkd3d.so.1" ];
@@ -44,6 +94,7 @@ then
         apt-get update
 
         echo "- Added armhf architecture."
+        echo ""
     fi
 
     DEB_DEPS="libasound2:armhf libc6:armhf libglib2.0-0:armhf libgphoto2-6:armhf"
@@ -71,6 +122,7 @@ then
 fi
 
 
+echo ""
 echo "Installing WINE..."
 echo "=================="
 
@@ -125,16 +177,15 @@ then
     echo "================================================="
     echo ""
 
-    wget https://dl.winehq.org/wine-builds/debian/dists/bookworm/main/binary-i386/wine-staging_9.20~bookworm-1_i386.deb
-    wget https://dl.winehq.org/wine-builds/debian/dists/bookworm/main/binary-i386/wine-staging-i386_9.20~bookworm-1_i386.deb
+    download_wine staging 9.20 debian bookworm i386
+    download_wine staging 9.20 debian bookworm amd64
 
-    wget https://dl.winehq.org/wine-builds/debian/dists/bookworm/main/binary-amd64/wine-staging_9.20~bookworm-1_amd64.deb
-    wget https://dl.winehq.org/wine-builds/debian/dists/bookworm/main/binary-amd64/wine-staging-amd64_9.20~bookworm-1_amd64.deb
+    
+#    wget https://dl.winehq.org/wine-builds/debian/dists/bookworm/main/binary-i386/wine-staging_9.20~bookworm-1_i386.deb
+#    wget https://dl.winehq.org/wine-builds/debian/dists/bookworm/main/binary-i386/wine-staging-i386_9.20~bookworm-1_i386.deb
 
-    if ! [ "$?" == "0" ];
-    then
-        failed
-    fi
+#    wget https://dl.winehq.org/wine-builds/debian/dists/bookworm/main/binary-amd64/wine-staging_9.20~bookworm-1_amd64.deb
+#    wget https://dl.winehq.org/wine-builds/debian/dists/bookworm/main/binary-amd64/wine-staging-amd64_9.20~bookworm-1_amd64.deb
 
 
     echo ""
@@ -164,11 +215,11 @@ then
     ln -s "$HOME/wine/usr/share/lintian/overrides/wine-staging-i386" "/usr/share/lintian/overrides/wine-staging-i386"
     ln -s "$HOME/wine/usr/share/lintian/overrides/wine-staging-amd64" "/usr/share/lintian/overrides/wine-staging-amd64"
 
-    boxify "$HOME/wine/opt/wine-staging/bin/wine"
-    boxify "$HOME/wine/opt/wine-staging/bin/wine64"
-    boxify "$HOME/wine/opt/wine-staging/bin/wineboot"
-    boxify "$HOME/wine/opt/wine-staging/bin/winecfg"
-    boxify "$HOME/wine/opt/wine-staging/bin/wineserver"
+    boxify "/opt/wine-staging/bin/wine"
+    boxify "/opt/wine-staging/bin/wine64"
+    boxify "/opt/wine-staging/bin/wineboot"
+    boxify "/opt/wine-staging/bin/winecfg"
+    boxify "/opt/wine-staging/bin/wineserver"
 
     echo "Finished WINE setup!"
     echo ""
